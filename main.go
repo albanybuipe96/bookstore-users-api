@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"github.com/albanybuipe96/bookstore-users-api/app"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	app.Start()
 }
