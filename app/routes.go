@@ -5,7 +5,6 @@ import (
 )
 
 func appRoutes() {
-
 	router.GET("/ping", handlers.Ping)
 	v1 := router.Group("/api/v1")
 	{
