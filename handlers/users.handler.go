@@ -1,39 +1,39 @@
 package handlers
 
 import (
-	"encoding/json"
 	"github.com/albanybuipe96/bookstore-users-api/domain/users"
 	"github.com/albanybuipe96/bookstore-users-api/services"
+	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 	"github.com/gin-gonic/gin"
-	"io"
 	"net/http"
 )
 
 func CreateUser(context *gin.Context) {
 	var user users.User
 
-	bytes, err := io.ReadAll(context.Request.Body)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	err = json.Unmarshal(bytes, &user)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if err := context.ShouldBindJSON(&user); err != nil {
+		parsingErr := errors.CustomError{
+			Message: "Invalid json body",
+			Code:    http.StatusBadRequest,
+			Error:   "bad_request",
+		}
+		context.JSON(parsingErr.ReportError())
 		return
 	}
 
 	result, err := services.CreateUser(user)
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		context.JSON(err.ReportError())
 		return
 	}
 	context.JSON(http.StatusCreated, result)
 }
 
 func GetUser(context *gin.Context) {
-
+	result, err := services.GetUserByID(context.GetInt64("user_id"))
+	if err != nil {
+		context.JSON(err.ReportError())
+		return
+	}
+	context.JSON(http.StatusOK, result)
 }
-
-func FindUser(context *gin.Context) {}
