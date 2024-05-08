@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/albanybuipe96/bookstore-users-api/domain/users"
+	"github.com/albanybuipe96/bookstore-users-api/domain/models"
 	"github.com/albanybuipe96/bookstore-users-api/services"
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 )
 
 func CreateUser(context *gin.Context) {
-	var user users.User
+	var user models.User
 
 	if err := context.ShouldBindJSON(&user); err != nil {
 		parsingErr := errors.BadRequestError("Invalid json body")

@@ -16,10 +16,10 @@ func (err *CustomError) ReportError() (int, *CustomError) {
 	}
 }
 
-func BadRequestError(msg string) *CustomError {
+func BadRequestError(message string) *CustomError {
 	return &CustomError{
 		Code:    http.StatusBadRequest,
-		Message: msg,
+		Message: message,
 		Error:   "bad_request",
 	}
 }
