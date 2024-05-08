@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/albanybuipe96/bookstore-users-api/utils/dates"
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 )
 
@@ -19,6 +20,8 @@ func (user *User) Save() *errors.CustomError {
 	if current != nil {
 		return errors.BadRequestError("User already exists")
 	}
+
+	user.DateCreated = dates.GetFormattedTime()
 	users[user.Id] = user
 	return nil
 }
