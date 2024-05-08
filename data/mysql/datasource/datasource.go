@@ -3,8 +3,8 @@ package datasource
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"log"
 	"os"
 )
@@ -17,32 +17,24 @@ const (
 	DB_DATABASE = "DB_DATABASE"
 )
 
-var DbClient *sql.DB
+var (
+	DbClient *sql.DB
+)
 
 func init() {
 
-	if err := godotenv.Load(".env.postgres"); err != nil {
+	if err := godotenv.Load(".env"); err != nil {
 		log.Fatal("Error loading .env.postgres file")
 	}
 
 	dbUsername := os.Getenv(DB_USERNAME)
 	dbPassword := os.Getenv(DB_PASSWORD)
 	dbHost := os.Getenv(DB_HOST)
-	dbPort := os.Getenv(DB_PORT)
 	dbName := os.Getenv(DB_DATABASE)
 
-	dataSourceName := fmt.Sprintf(
-		"postgresql://%s:%s@%s:%s/%s?sslmode=disable",
-		dbUsername,
-		dbPassword,
-		dbHost,
-		dbPort,
-		dbName,
-	)
-	DbClient, err := sql.Open(
-		"postgres",
-		dataSourceName,
-	)
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", dbUsername, dbPassword, dbHost, dbName)
+	var err error
+	DbClient, err = sql.Open("mysql", dataSourceName)
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/albanybuipe96/bookstore-users-api/domain/models"
 	"github.com/albanybuipe96/bookstore-users-api/services"
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
@@ -18,8 +19,9 @@ func CreateUser(context *gin.Context) {
 		return
 	}
 
-	result, err := services.CreateUser(user)
+	result, err := services.CreateUser(&user)
 	if err != nil {
+		fmt.Println("ERROR HERE", err.Error())
 		context.JSON(err.ReportError())
 		return
 	}

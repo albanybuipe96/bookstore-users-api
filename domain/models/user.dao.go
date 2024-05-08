@@ -10,36 +10,31 @@ import (
 
 var users = make(map[int64]*User)
 
-func (user *User) Save() *errors.CustomError {
-	//query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
-	//statement, err := datasource.DbClient.Prepare(query.Insert())
+// TODO: 11:19:32 CONTINUE FROM HERE
 
-	fmt.Println("Got here 1")
-	statement, err := datasource.DbClient.Prepare(
-		"INSERT INTO users(firstname, lastname, email, created) VALUES(?, ?, ?, ?);",
-	)
-	fmt.Println("Got here")
+func (user *User) Save() *errors.CustomError {
+	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
+	statement, err := datasource.DbClient.Prepare(query.Insert())
+
 	if err != nil {
-		fmt.Println("Error here")
 		log.Println(err.Error())
 		return errors.InternalServerError(err.Error())
 	}
 	defer statement.Close()
 
-	fmt.Println("Got here 2")
-
-	result, err := statement.Exec(
+	result, err2 := statement.Exec(
 		user.FirstName, user.LastName, user.Email, user.CreatedAt,
 	)
-	if err != nil {
-		log.Println(err.Error())
-		return errors.InternalServerError(err.Error())
+	if err2 != nil {
+		fmt.Println("ERROR HERE")
+		log.Println(err2.Error())
+		return errors.InternalServerError(err2.Error())
 	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		log.Println(err.Error())
-		return errors.InternalServerError(err.Error())
+	id, err3 := result.LastInsertId()
+	if err3 != nil {
+		log.Println(err3.Error())
+		return errors.InternalServerError(err3.Error())
 	}
 
 	user.Id = id
