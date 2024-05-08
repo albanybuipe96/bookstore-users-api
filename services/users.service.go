@@ -12,9 +12,6 @@ func CreateUser(user models.User) (*models.User, *errors.CustomError) {
 		return nil, errors.BadRequestError(err.Error())
 	}
 
-	lastId += 1
-	user.Id = lastId
-
 	if err := user.Save(); err != nil {
 		return nil, err
 	}

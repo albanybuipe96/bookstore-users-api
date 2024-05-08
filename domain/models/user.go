@@ -6,11 +6,11 @@ import (
 )
 
 type User struct {
-	Id          int64  `db:"id"`
-	FirstName   string `db:"firstname"`
-	LastName    string `db:"lastname"`
-	Email       string `db:"email"`
-	DateCreated string `db:"datecreated"`
+	Id        int64  `json:"id"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"created"`
 }
 
 func (user *User) Validate() *errors.CustomError {
@@ -30,5 +30,5 @@ func (user *User) Populate(usr User) {
 	user.FirstName = usr.FirstName
 	user.LastName = usr.LastName
 	user.Email = usr.Email
-	user.DateCreated = usr.DateCreated
+	user.CreatedAt = usr.CreatedAt
 }
