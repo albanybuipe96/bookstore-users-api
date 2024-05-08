@@ -6,6 +6,7 @@ import (
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func CreateUser(context *gin.Context) {
@@ -26,9 +27,15 @@ func CreateUser(context *gin.Context) {
 }
 
 func GetUser(context *gin.Context) {
-	result, err := services.GetUserByID(context.GetInt64("user_id"))
+	id, err := strconv.ParseInt(context.Param("user_id"), 10, 64)
 	if err != nil {
-		context.JSON(err.ReportError())
+		er := errors.BadRequestError("Invalid user id")
+		context.JSON(er.ReportError())
+		return
+	}
+	result, er := services.GetUserByID(id)
+	if er != nil {
+		context.JSON(er.ReportError())
 		return
 	}
 	context.JSON(http.StatusOK, result)
