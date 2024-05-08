@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/albanybuipe96/bookstore-users-api/data/mysql/datasource"
 	"github.com/albanybuipe96/bookstore-users-api/utils/dates"
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 )
@@ -27,6 +28,10 @@ func (user *User) Save() *errors.CustomError {
 }
 
 func (user *User) Get() *errors.CustomError {
+	err := datasource.DbClient.Ping()
+	if err != nil {
+		return nil
+	}
 	result := users[user.Id]
 	if result == nil {
 		return errors.NotFoundError(
