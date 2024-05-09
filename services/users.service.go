@@ -23,6 +23,36 @@ func CreateUser(user *models.User) (*models.User, *errors.CustomError) {
 	return user, nil
 }
 
+func UpdateUser(user *models.User) (*models.User, *errors.CustomError) {
+	current, err := GetUserByID(user.Id)
+	if err != nil {
+		return nil, err
+	}
+	if err := current.Populate(*user); err != nil {
+		return nil, err
+	}
+	current.CreatedAt = dates.GetFormattedTime()
+	if err := current.Update(); err != nil {
+		return nil, err
+	}
+	return current, nil
+}
+
+func DeleteUser(user *models.User) (interface{}, *errors.CustomError) {
+	current, err := GetUserByID(user.Id)
+	if err != nil {
+		return "", err
+	}
+	if err := current.Delete(); err != nil {
+		return "", err
+	}
+	return struct {
+		Message string `json:"message"`
+	}{
+		Message: "User successfully deleted",
+	}, nil
+}
+
 // GetUserByID retrieves a user by their ID.
 // It returns the user if found, or an error if the user does not exist or if there's an issue retrieving the user.
 func GetUserByID(id int64) (*models.User, *errors.CustomError) {
