@@ -1,13 +1,15 @@
 package models
 
 import (
+	"log"
+
 	"github.com/albanybuipe96/bookstore-users-api/data/mysql/datasource"
 	"github.com/albanybuipe96/bookstore-users-api/data/mysql/queries"
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
-	"log"
-	"strings"
 )
 
+// Save saves a user to the database.
+// It prepares an insert statement, executes it with the user's details, and returns an error if any step fails.
 func (user *User) Save() *errors.CustomError {
 	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
 	statement, err := datasource.DbClient.Prepare(query.Insert())
@@ -22,13 +24,7 @@ func (user *User) Save() *errors.CustomError {
 		user.FirstName, user.LastName, user.Email, user.CreatedAt,
 	)
 	if err != nil {
-		log.Println(err.Error())
-
-		if strings.Contains(err.Error(), "email_UNIQUE") {
-			return errors.BadRequestError("email already taken")
-		}
-
-		return errors.InternalServerError(err.Error())
+		return errors.ReportDbError(err)
 	}
 
 	id, err := result.LastInsertId()
@@ -42,6 +38,8 @@ func (user *User) Save() *errors.CustomError {
 	return nil
 }
 
+// Get retrieves a user from the database by their ID.
+// It prepares a fetch statement, executes it with the user's ID, and returns the user or an error if any step fails.
 func (user *User) Get() *errors.CustomError {
 	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
 	statement, err := datasource.DbClient.Prepare(query.Fetch())
@@ -54,18 +52,20 @@ func (user *User) Get() *errors.CustomError {
 	row := statement.QueryRow(user.Id)
 
 	if err := row.Scan(
-		&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.CreatedAt,
+		&user.Id,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.CreatedAt,
 	); err != nil {
-		log.Println(err.Error())
-		if strings.Contains(err.Error(), "no rows in result set") {
-			return errors.NotFoundError("user not found")
-		}
-		return errors.NotFoundError(err.Error())
+		return errors.ReportDbError(err)
 	}
 
 	return nil
 }
 
+// GetAllUsers retrieves all users from the database.
+// It prepares a fetch all statement, executes it, and returns a list of users or an error if any step fails.
 func (user *User) GetAllUsers() ([]*User, *errors.CustomError) {
 	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
 	statement, err := datasource.DbClient.Prepare(query.FetchAll())

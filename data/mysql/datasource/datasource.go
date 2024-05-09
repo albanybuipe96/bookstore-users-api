@@ -3,12 +3,14 @@ package datasource
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
+// DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE are constants used to store the database connection details.
 const (
 	DB_USERNAME = "DB_USERNAME"
 	DB_PASSWORD = "DB_PASSWORD"
@@ -17,10 +19,14 @@ const (
 	DB_DATABASE = "DB_DATABASE"
 )
 
+// DbClient is a global variable that holds the database connection.
 var (
 	DbClient *sql.DB
 )
 
+// init initializes the database connection.
+// It loads the environment variables from.env, constructs the data source name, and opens a connection to the database.
+// If the connection fails, it panics.
 func init() {
 
 	if err := godotenv.Load(".env"); err != nil {

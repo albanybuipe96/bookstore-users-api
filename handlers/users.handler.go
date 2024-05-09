@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/albanybuipe96/bookstore-users-api/domain/models"
 	"github.com/albanybuipe96/bookstore-users-api/services"
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"strconv"
 )
 
 func CreateUser(context *gin.Context) {

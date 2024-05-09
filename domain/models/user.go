@@ -1,10 +1,13 @@
 package models
 
 import (
-	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 	"strings"
+
+	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 )
 
+// User represents a user in the system.
+// It includes fields for ID, first name, last name, email, and creation timestamp.
 type User struct {
 	Id        int64  `json:"id"`
 	FirstName string `json:"firstname"`
@@ -13,6 +16,9 @@ type User struct {
 	CreatedAt string `json:"created"`
 }
 
+// Validate checks if the user's email is valid.
+// It trims whitespace and converts the email to lowercase.
+// If the email is empty or does not contain an '@' symbol, it returns an error.
 func (user *User) Validate() *errors.CustomError {
 	user.Email = strings.TrimSpace(strings.ToLower(user.Email))
 	if user.Email == "" || !strings.Contains(user.Email, "@") {
@@ -25,6 +31,8 @@ func (user *User) Validate() *errors.CustomError {
 	return nil
 }
 
+// Populate copies the values from one User instance to another.
+// It's used to transfer data between instances of the User struct.
 func (user *User) Populate(usr User) {
 	user.Id = usr.Id
 	user.FirstName = usr.FirstName

@@ -6,6 +6,9 @@ import (
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 )
 
+// CreateUser creates a new user in the system.
+// It validates the user, sets the creation timestamp, and saves the user to the database.
+// If any step fails, it returns an error.
 func CreateUser(user *models.User) (*models.User, *errors.CustomError) {
 	if err := user.Validate(); err != nil {
 		return nil, errors.BadRequestError(err.Error())
@@ -20,6 +23,8 @@ func CreateUser(user *models.User) (*models.User, *errors.CustomError) {
 	return user, nil
 }
 
+// GetUserByID retrieves a user by their ID.
+// It returns the user if found, or an error if the user does not exist or if there's an issue retrieving the user.
 func GetUserByID(id int64) (*models.User, *errors.CustomError) {
 	user := &models.User{Id: id}
 	if err := user.Get(); err != nil {
@@ -28,6 +33,8 @@ func GetUserByID(id int64) (*models.User, *errors.CustomError) {
 	return user, nil
 }
 
+// GetUsers retrieves all users from the system.
+// It returns a list of users or an error if there's an issue retrieving the users.
 func GetUsers() ([]*models.User, *errors.CustomError) {
 	user := &models.User{}
 	users, err := user.GetAllUsers()
