@@ -16,6 +16,10 @@ type CustomError struct {
 	Reason  string `json:"error"`
 }
 
+func NewCustomError() *CustomError {
+	return &CustomError{}
+}
+
 // String returns the error message as a string.
 func (err *CustomError) String() string {
 	return err.Message
@@ -70,7 +74,7 @@ func ReportDbError(err error) *CustomError {
 	if !ok {
 
 		if strings.Contains(err.Error(), "no rows in result set") {
-			return NotFoundError("user not found")
+			return NotFoundError("no record found for given id")
 		}
 
 		return InternalServerError(err.Error())
@@ -78,6 +82,7 @@ func ReportDbError(err error) *CustomError {
 
 	switch sqlErr.Number {
 	case 1062:
+		// TODO: generalise message if need be
 		return BadRequestError("email already taken")
 	}
 
