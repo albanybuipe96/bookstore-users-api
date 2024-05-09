@@ -3,7 +3,7 @@ GET localhost:8080/ping
 
 
 ### Get user by ID
-GET localhost:8080/api/v1/users/2
+GET localhost:8080/api/v1/users/1
 
 ### Get all users
 GET localhost:8080/api/v1/users
@@ -13,8 +13,20 @@ POST localhost:8080/api/v1/users/
 Content-Type: application/json
 
 {
-  "firstname": "Tj",
-  "lastname": "Dramani",
-  "email": "tj@nexus.com"
+  "firstname": "Khadija",
+  "lastname": "Abdulai",
+  "email": "khadija@nexus.com"
 }
 
+### update user
+PATCH localhost:8080/api/v1/users/1
+Content-Type: application/json
+
+{
+  "firstname": "Tijani",
+  "email": "tijani@nexus.com"
+}
+
+### create new user
+DELETE localhost:8080/api/v1/users/16
+Content-Type: application/json
