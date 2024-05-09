@@ -6,7 +6,7 @@ import (
 
 type CustomError struct {
 	Message string `json:"message"`
-	Code    int    `json:"code"`
+	Code    int    `json:"status,omitempty"`
 	Reason  string `json:"error"`
 }
 

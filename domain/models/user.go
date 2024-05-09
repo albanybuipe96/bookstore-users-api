@@ -15,7 +15,7 @@ type User struct {
 
 func (user *User) Validate() *errors.CustomError {
 	user.Email = strings.TrimSpace(strings.ToLower(user.Email))
-	if user.Email == "" {
+	if user.Email == "" || !strings.Contains(user.Email, "@") {
 		return &errors.CustomError{
 			Message: "invalid email address",
 			Code:    500,

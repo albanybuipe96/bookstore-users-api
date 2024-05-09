@@ -42,3 +42,12 @@ func GetUser(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, result)
 }
+
+func GetUsers(context *gin.Context) {
+	users, err := services.GetUsers()
+	if err != nil {
+		context.JSON(err.ReportError())
+		return
+	}
+	context.JSON(http.StatusOK, users)
+}

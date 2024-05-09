@@ -6,8 +6,6 @@ import (
 	"github.com/albanybuipe96/bookstore-users-api/utils/errors"
 )
 
-var lastId int64 = 0
-
 func CreateUser(user *models.User) (*models.User, *errors.CustomError) {
 	if err := user.Validate(); err != nil {
 		return nil, errors.BadRequestError(err.Error())
@@ -28,4 +26,13 @@ func GetUserByID(id int64) (*models.User, *errors.CustomError) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func GetUsers() ([]*models.User, *errors.CustomError) {
+	user := &models.User{}
+	users, err := user.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
