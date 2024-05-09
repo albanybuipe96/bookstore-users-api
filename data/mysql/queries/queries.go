@@ -35,15 +35,28 @@ func (query *Query) Insert() string {
 }
 
 // Fetch generates an SQL SELECT statement to fetch a user by their ID.
-// It uses the table name to construct the statement.
 // Returns the SQL statement as a string.
 func (query *Query) Fetch() string {
 	return fmt.Sprintf("SELECT * FROM %s WHERE id=?;", query.TableName)
 }
 
 // FetchAll generates an SQL SELECT statement to fetch all users from the table.
-// It uses the table name to construct the statement.
 // Returns the SQL statement as a string.
 func (query *Query) FetchAll() string {
 	return fmt.Sprintf("SELECT * FROM %s;", query.TableName)
+}
+
+// Update generates an SQL UPDATE statement for the given table.
+// Returns the SQL statement as a string.
+func (query *Query) Update() string {
+	return fmt.Sprintf(
+		"UPDATE %s SET firstname=?, lastname=?, email=? WHERE id=?;",
+		query.TableName,
+	)
+}
+
+// Delete generates an SQL DELETE statement for the given table.
+// Returns the SQL statement as a string.
+func (query *Query) Delete() string {
+	return fmt.Sprintf("DELETE FROM %s WHERE id=?;", query.TableName)
 }
