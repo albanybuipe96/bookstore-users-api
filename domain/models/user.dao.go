@@ -38,6 +38,23 @@ func (user *User) Save() *errors.CustomError {
 	return nil
 }
 
+func (user *User) Update() *errors.CustomError {
+	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
+	statement, err := datasource.DbClient.Prepare(query.Update())
+	if err != nil {
+		log.Println(err.Error())
+		return errors.ReportDbError(err)
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(user.FirstName, user.LastName, user.Email, user.Id)
+	if err != nil {
+		log.Println(err.Error())
+		return errors.ReportDbError(err)
+	}
+	return nil
+}
+
 // Get retrieves a user from the database by their ID.
 // It prepares a fetch statement, executes it with the user's ID, and returns the user or an error if any step fails.
 func (user *User) Get() *errors.CustomError {
@@ -105,4 +122,20 @@ func (user *User) GetAllUsers() ([]*User, *errors.CustomError) {
 	}
 
 	return results, nil
+}
+
+func (user *User) Delete() *errors.CustomError {
+	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
+	statement, err := datasource.DbClient.Prepare(query.Delete())
+	if err != nil {
+		log.Println(err.Error())
+		return errors.ReportDbError(err)
+	}
+	defer statement.Close()
+	_, err = statement.Exec(user.Id)
+	if err != nil {
+		log.Println(err.Error())
+		return errors.ReportDbError(err)
+	}
+	return nil
 }
