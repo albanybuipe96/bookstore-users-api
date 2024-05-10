@@ -2,10 +2,10 @@ package errors
 
 import (
 	"errors"
+	"fmt"
+	"github.com/lib/pq"
 	"net/http"
 	"strings"
-
-	"github.com/go-sql-driver/mysql"
 )
 
 // CustomError represents a custom error structure with a message, HTTP status code, and a reason.
@@ -70,7 +70,7 @@ func NotFoundError(msg string) *CustomError {
 // ReportDbError reports database errors, returning a CustomError based on the error type.
 // It handles MySQL errors and specific cases like "no rows in result set" or duplicate entries.
 func ReportDbError(err error) *CustomError {
-	var sqlErr *mysql.MySQLError
+	var sqlErr *pq.Error
 	ok := errors.As(err, &sqlErr)
 	if !ok {
 
@@ -81,15 +81,17 @@ func ReportDbError(err error) *CustomError {
 		return InternalServerError(err.Error())
 	}
 
-	switch sqlErr.Number {
-	case 1062:
-		// TODO: generalise message if need be
-		return BadRequestError("email already taken")
-	case 1364:
-		return BadRequestError("no value provided for some required field(s)")
-	case 1406:
-		return BadRequestError("email too long")
+	fmt.Println("PG ERROR", sqlErr.Code, sqlErr.Message)
+
+	// https://www.postgresql.org/docs/9.3/errcodes-appendix.html
+
+	switch sqlErr.Code {
+	case "42601":
+		return InternalServerError("Syntax error in db")
+	case "23505":
+		return BadRequestError("Email already taken")
+
 	}
 
-	return InternalServerError(err.Error())
+	return InternalServerError("Something went wrong")
 }
