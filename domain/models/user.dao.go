@@ -21,7 +21,12 @@ func (user *User) Save() *errors.CustomError {
 	defer statement.Close()
 
 	result, err := statement.Exec(
-		user.FirstName, user.LastName, user.Email, user.CreatedAt,
+		user.FirstName,
+		user.LastName,
+		user.Email,
+		user.Status,
+		user.Password,
+		user.CreatedAt,
 	)
 	if err != nil {
 		return errors.ReportDbError(err)
@@ -47,7 +52,15 @@ func (user *User) Update() *errors.CustomError {
 	}
 	defer statement.Close()
 
-	_, err = statement.Exec(user.FirstName, user.LastName, user.Email, user.Id)
+	_, err = statement.Exec(
+		user.FirstName,
+		user.LastName,
+		user.Email,
+		user.Status,
+		user.Password,
+		user.CreatedAt,
+		user.Id,
+	)
 	if err != nil {
 		log.Println(err.Error())
 		return errors.ReportDbError(err)
@@ -61,8 +74,8 @@ func (user *User) Get() *errors.CustomError {
 	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
 	statement, err := datasource.DbClient.Prepare(query.Fetch())
 	if err != nil {
-		log.Println(err.Error())
-		return errors.InternalServerError(err.Error())
+
+		return errors.ReportDbError(err)
 	}
 	defer statement.Close()
 
@@ -74,7 +87,10 @@ func (user *User) Get() *errors.CustomError {
 		&user.LastName,
 		&user.Email,
 		&user.CreatedAt,
+		&user.Status,
+		&user.Password,
 	); err != nil {
+		log.Println(err.Error())
 		return errors.ReportDbError(err)
 	}
 
@@ -113,6 +129,8 @@ func (user *User) GetAllUsers() ([]*User, *errors.CustomError) {
 			&user.LastName,
 			&user.Email,
 			&user.CreatedAt,
+			&user.Status,
+			&user.Password,
 		)
 		if err != nil {
 			log.Println(err.Error())
@@ -120,6 +138,52 @@ func (user *User) GetAllUsers() ([]*User, *errors.CustomError) {
 		}
 		results = append(results, &user)
 	}
+
+	return results, nil
+}
+
+func (user *User) GetUserByStatus(status string) ([]*User, *errors.CustomError) {
+	query := queries.Query{TableName: "users", DbEngine: queries.MySQL}
+	statement, err := datasource.DbClient.Prepare(query.FetchByStatus())
+	if err != nil {
+		log.Println(err.Error())
+		return nil, errors.ReportDbError(err)
+	}
+	defer statement.Close()
+
+	rows, err := statement.Query(status)
+	if err != nil {
+		log.Println(err.Error())
+		return nil, errors.ReportDbError(err)
+	}
+	defer rows.Close()
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, errors.ReportDbError(err)
+	}
+
+	results := make([]*User, 0, len(columns))
+	for rows.Next() {
+		var user User
+		err = rows.Scan(
+			&user.Id,
+			&user.FirstName,
+			&user.LastName,
+			&user.Email,
+			&user.CreatedAt,
+			&user.Status,
+			&user.Password,
+		)
+		if err != nil {
+			log.Println(err.Error())
+			return nil, errors.ReportDbError(err)
+		}
+		results = append(results, &user)
+	}
+
+	//if len(results) == 0 {
+	//	return nil, errors.NotFoundError("no match found for given status")
+	//}
 
 	return results, nil
 }
@@ -132,8 +196,8 @@ func (user *User) Delete() *errors.CustomError {
 		return errors.ReportDbError(err)
 	}
 	defer statement.Close()
-	_, err = statement.Exec(user.Id)
-	if err != nil {
+
+	if _, err = statement.Exec(user.Id); err != nil {
 		log.Println(err.Error())
 		return errors.ReportDbError(err)
 	}
