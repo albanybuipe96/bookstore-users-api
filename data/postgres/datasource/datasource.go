@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 // DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE are constants used to store the database connection details.
@@ -15,7 +15,6 @@ const (
 	DB_USERNAME = "DB_USERNAME"
 	DB_PASSWORD = "DB_PASSWORD"
 	DB_HOST     = "DB_HOST"
-	DB_PORT     = "DB_PORT"
 	DB_DATABASE = "DB_DATABASE"
 )
 
@@ -38,9 +37,9 @@ func init() {
 	dbHost := os.Getenv(DB_HOST)
 	dbName := os.Getenv(DB_DATABASE)
 
-	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", dbUsername, dbPassword, dbHost, dbName)
+	dataSourceName := fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", dbUsername, dbPassword, dbHost, dbName)
 	var err error
-	DbClient, err = sql.Open("mysql", dataSourceName)
+	DbClient, err = sql.Open("postgres", dataSourceName)
 	if err != nil {
 		panic(err)
 	}
