@@ -3,7 +3,7 @@ GET localhost:8080/ping
 
 
 ### Get user by ID
-GET localhost:8080/api/v1/users/4
+GET localhost:8080/api/v1/users/6
 
 ### Get users by status
 GET localhost:8080/api/v1/users/status/active
@@ -16,14 +16,15 @@ POST localhost:8080/api/v1/users/
 Content-Type: application/json
 
 {
-  "firstname": "Abdullah",
-  "lastname": "'Mohammed'",
-  "email": "abdul@nexus.com",
-  "status": "pending"
+  "firstname": "Albany",
+  "lastname": "Buipe",
+  "email": "buipe@nexus.com",
+  "status": "pending",
+  "password": "Password@1"
 }
 
 ### update user
-PATCH localhost:8080/api/v1/users/22
+PATCH localhost:8080/api/v1/users/6
 Content-Type: application/json
 
 {
@@ -32,5 +33,5 @@ Content-Type: application/json
 
 ### 13 15 17 18 19 21
 ### delete user
-DELETE localhost:8080/api/v1/users/21
+DELETE localhost:8080/api/v1/users/5
 Content-Type: application/json
