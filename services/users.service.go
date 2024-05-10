@@ -73,3 +73,14 @@ func GetUsers() ([]*models.User, *errors.CustomError) {
 	}
 	return users, nil
 }
+
+// GetUsers retrieves all users from the system.
+// It returns a list of users or an error if there's an issue retrieving the users.
+func GetUsersByStatus(status string) ([]*models.User, *errors.CustomError) {
+	user := &models.User{}
+	users, err := user.GetUserByStatus(status)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}

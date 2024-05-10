@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -108,6 +109,22 @@ func DeleteUser(context *gin.Context) {
 
 func GetUsers(context *gin.Context) {
 	users, err := services.GetUsers()
+	if err != nil {
+		context.JSON(err.ReportError())
+		return
+	}
+	response := models.Response{
+		Data:    users,
+		Message: "success",
+		Code:    http.StatusOK,
+	}
+	context.JSON(http.StatusOK, response)
+}
+
+func GetUsersByStatus(context *gin.Context) {
+	status := context.Param("status")
+	log.Println("STATUS", status)
+	users, err := services.GetUsersByStatus(status)
 	if err != nil {
 		context.JSON(err.ReportError())
 		return
