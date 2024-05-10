@@ -24,12 +24,12 @@ type Query struct {
 func (query *Query) Insert() string {
 	if query.DbEngine == MySQL {
 		return fmt.Sprintf(
-			"INSERT INTO %s(firstname, lastname, email, created) VALUES(?, ?, ?, ?);",
+			"INSERT INTO %s(firstname, lastname, email, status, password, created) VALUES(?, ?, ?, ?, ?, ?);",
 			query.TableName,
 		)
 	}
 	return fmt.Sprintf(
-		"INSERT INTO %s (firstname, lastname, email, created) VALUES($1, $2, $3, $4);",
+		"INSERT INTO %s (firstname, lastname, email, status, password, created) VALUES($1, $2, $3, $4, $5, $6);",
 		query.TableName,
 	)
 }
@@ -46,13 +46,21 @@ func (query *Query) FetchAll() string {
 	return fmt.Sprintf("SELECT * FROM %s;", query.TableName)
 }
 
+// FetchByStatus generates an SQL SELECT statement to fetch all users from the table based on status.
+// Returns the SQL statement as a string.
+func (query *Query) FetchByStatus() string {
+	return fmt.Sprintf("SELECT * FROM %s WHERE status=?;", query.TableName)
+}
+
 // Update generates an SQL UPDATE statement for the given table.
 // Returns the SQL statement as a string.
 func (query *Query) Update() string {
 	return fmt.Sprintf(
-		"UPDATE %s SET firstname=?, lastname=?, email=? WHERE id=?;",
+		"UPDATE %s SET firstname=?, "+
+			"lastname=?, email=?, status=?, password=?, created=? WHERE id=?;",
 		query.TableName,
 	)
+
 }
 
 // Delete generates an SQL DELETE statement for the given table.

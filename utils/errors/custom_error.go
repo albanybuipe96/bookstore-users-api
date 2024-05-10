@@ -16,6 +16,7 @@ type CustomError struct {
 	Reason  string `json:"error"`
 }
 
+// NewCustomError creates and returns a pointer to a new CustomError
 func NewCustomError() *CustomError {
 	return &CustomError{}
 }
@@ -84,6 +85,10 @@ func ReportDbError(err error) *CustomError {
 	case 1062:
 		// TODO: generalise message if need be
 		return BadRequestError("email already taken")
+	case 1364:
+		return BadRequestError("no value provided for some required field(s)")
+	case 1406:
+		return BadRequestError("email too long")
 	}
 
 	return InternalServerError(err.Error())
