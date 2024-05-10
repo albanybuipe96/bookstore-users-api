@@ -21,14 +21,6 @@ var statuses = []string{
 	StatusPending,
 }
 
-//func (status *Status) ValidateStatus() *errors.CustomError {
-
-//	if slices.Contains(statuses, string(*status)) {
-//		return nil
-//	}
-//	return errors.BadRequestError("invalid status")
-//}
-
 // User represents a user in the system.
 // It includes fields for ID, first name, last name, email, and creation timestamp.
 type User struct {
@@ -55,9 +47,6 @@ func (user *User) Validate() *errors.CustomError {
 	if err != nil {
 		return errors.BadRequestError("invalid email address")
 	}
-	//if user.Password == "" {
-	//	return errors.BadRequestError("invalid/empty password field")
-	//}
 	if user.Status == "" {
 		return errors.BadRequestError("invalid status field")
 	}
