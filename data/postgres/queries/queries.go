@@ -24,12 +24,12 @@ type Query struct {
 func (query *Query) Insert() string {
 	if query.DbEngine == MySQL {
 		return fmt.Sprintf(
-			"INSERT INTO %s(firstname, lastname, email, status, password, created) VALUES(?, ?, ?, ?, ?, ?);",
+			"INSERT INTO %s(firstname=?, lastname=?, email=?, status=?, password=?, created=?);",
 			query.TableName,
 		)
 	}
 	return fmt.Sprintf(
-		"INSERT INTO %s (firstname, lastname, email, status, password, created) VALUES($1, $2, $3, $4, $5, $6);",
+		"INSERT INTO %s (firstname, lastname, email, status, password, created) VALUES($1, $2, $3, $4, $5, $6) RETURNING *;",
 		query.TableName,
 	)
 }
@@ -37,7 +37,7 @@ func (query *Query) Insert() string {
 // Fetch generates an SQL SELECT statement to fetch a user by their ID.
 // Returns the SQL statement as a string.
 func (query *Query) Fetch() string {
-	return fmt.Sprintf("SELECT * FROM %s WHERE id=?;", query.TableName)
+	return fmt.Sprintf("SELECT * FROM %s WHERE id=$1;", query.TableName)
 }
 
 // FetchAll generates an SQL SELECT statement to fetch all users from the table.
@@ -49,22 +49,33 @@ func (query *Query) FetchAll() string {
 // FetchByStatus generates an SQL SELECT statement to fetch all users from the table based on status.
 // Returns the SQL statement as a string.
 func (query *Query) FetchByStatus() string {
-	return fmt.Sprintf("SELECT * FROM %s WHERE status=?;", query.TableName)
+	if query.DbEngine == MySQL {
+		return fmt.Sprintf("SELECT * FROM %s WHERE status=?;", query.TableName)
+	}
+	return fmt.Sprintf("SELECT * FROM %s WHERE status=$1;", query.TableName)
 }
 
 // Update generates an SQL UPDATE statement for the given table.
 // Returns the SQL statement as a string.
 func (query *Query) Update() string {
+	if query.DbEngine == MySQL {
+		return fmt.Sprintf(
+			"UPDATE %s SET firstname=?, "+
+				"lastname=?, email=?, status=?, password=?, created=? WHERE id=?;",
+			query.TableName,
+		)
+	}
 	return fmt.Sprintf(
-		"UPDATE %s SET firstname=?, "+
-			"lastname=?, email=?, status=?, password=?, created=? WHERE id=?;",
-		query.TableName,
+		"UPDATE %s SET firstname=$1, lastname=$2, "+
+			"email=$3, status=$4, password=$5, created=$6 WHERE id=$7", query.TableName,
 	)
-
 }
 
 // Delete generates an SQL DELETE statement for the given table.
 // Returns the SQL statement as a string.
 func (query *Query) Delete() string {
-	return fmt.Sprintf("DELETE FROM %s WHERE id=?;", query.TableName)
+	if query.DbEngine == MySQL {
+		return fmt.Sprintf("DELETE FROM %s WHERE id=?;", query.TableName)
+	}
+	return fmt.Sprintf("DELETE FROM %s WHERE id=$1", query.TableName)
 }
